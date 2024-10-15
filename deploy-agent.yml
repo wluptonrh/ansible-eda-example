@@ -1,9 +1,21 @@
 ---
-- name: Import and deploy the datadog collection  
-  hosts: servers
-  tasks:
-    - name: Import the Datadog Agent role from the Datadog collection
-      import_role:
-        name: datadog.dd.agent
-  vars:
-    datadog_api_key: "{{ dd_api_key }}"
+  - name: Install and configure Datadog Agent for Apache monitoring
+    hosts: all
+    become: true
+    vars:
+      datadog_api_key: "{{ datadog_api_key }}"
+      datadog_site: "us5.datadoghq.com"  # Change if using Datadog EU or another site
+      apache_service: "httpd"  # Change if using a different Apache service name
+
+    tasks:  
+      - name: Run Agent Install Script
+        ansible.builtin.shell: |
+          DD_API_KEY={{ datadog_api_key }} DD_SITE={{ datadog_site }} bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
+        args:
+          executable: /bin/bash
+
+      - name: Enable and start the Datadog Agent service
+        ansible.builtin.service:
+          name: datadog-agent.service
+          state: started
+          enabled: true
