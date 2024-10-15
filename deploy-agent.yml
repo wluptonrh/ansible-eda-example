@@ -25,15 +25,12 @@
           path: /etc/datadog-agent/conf.d/apache.d/conf.yml
           content: |
             init_config:
-      
             instances:
               ## @param apache_status_url - string - required
               ## Status url of your Apache server.
               #
               - apache_status_url: http://localhost/server-status?auto
               
-          
-
       - name: Restart Datadog agent on RHEL
         ansible.builtin.service:
             name: datadog-agent
