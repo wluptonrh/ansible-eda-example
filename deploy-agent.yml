@@ -13,8 +13,12 @@
       #     DD_API_KEY={{ datadog_api_key }} DD_SITE={{ datadog_site }} bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
       #   args:
       #     executable: /bin/bash
-
-
+      - name: Install Apache if not already installed
+        ansible.builtin.dnf:
+          name: httpd
+          state: present
+          update_cache: yes
+          
       - name: Install mod_status for Apache
         lineinfile:
           path: /etc/httpd/conf/httpd.conf
