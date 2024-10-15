@@ -1,6 +1,6 @@
 ---
   - name: Install and configure Datadog Agent for Apache monitoring
-    hosts: "{{ create_vm_vm_name }}"
+    hosts: all
     become: true
     vars:
       datadog_api_key: "{{ datadog_api_key }}"
