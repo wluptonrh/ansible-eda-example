@@ -14,6 +14,34 @@
       #   args:
       #     executable: /bin/bash
 
+
+      - name: Install mod_status for Apache
+        lineinfile:
+          path: /etc/httpd/conf/httpd.conf
+          insertafter: '^#LoadModule status_module'
+          line: 'LoadModule status_module modules/mod_status.so'
+          state: present
+        notify: restart apache
+  
+      - name: Enable ExtendedStatus in Apache configuration
+        lineinfile:
+          path: /etc/httpd/conf/httpd.conf
+          insertafter: '^#ExtendedStatus'
+          line: 'ExtendedStatus On'
+          state: present
+        notify: restart apache
+  
+      - name: Configure Apache to allow access to server-status page
+        blockinfile:
+          path: /etc/httpd/conf.d/status.conf
+          create: yes
+          block: |
+            <Location /server-status>
+                SetHandler server-status
+                Require local
+            </Location>
+        notify: restart apache
+
       - name: Enable and start the Datadog Agent service
         ansible.builtin.service:
           name: datadog-agent.service
@@ -36,3 +64,11 @@
             name: datadog-agent
             state: restarted
             enabled: true
+
+    handlers:
+     - name: restart apache
+       ansible.builtin.service:
+         name: httpd
+         state: restarted
+
+  
