@@ -21,7 +21,8 @@
           enabled: true
 
       - name: Configure Apache integration for Datadog in conf.yaml
-        copy:
+        ansible.builtin.copy:
+          path: /etc/datadog-agent/conf.d/apache.d/conf.yml
           content: |
             init_config:
       
@@ -30,6 +31,8 @@
               ## Status url of your Apache server.
               #
               - apache_status_url: http://localhost/server-status?auto
+              
+          
 
       - name: Restart Datadog agent on RHEL
         ansible.builtin.service:
